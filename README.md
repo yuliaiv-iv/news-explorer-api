@@ -1,1 +1,1 @@
-# news-explorer-api
+## Diploma news-explorer-api
