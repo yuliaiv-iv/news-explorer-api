@@ -6,15 +6,16 @@ const NotFoundError = require('../errors/not-found-error');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
 
-// console.log(process.env.JWT_SECRET);
-
 const getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Запрашиваемый ресурс не найден');
       }
-      return res.status(200).send(user);
+      return res.status(200).send({
+        name: user.name,
+        email: user.email,
+      });
     })
     .catch((err) => next(err));
 };
@@ -50,7 +51,11 @@ const loginUser = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
+      );
       res.status(200).send({ token, name: user.name, email: user.email });
     })
     .catch((err) => {
