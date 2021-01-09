@@ -3,38 +3,51 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-// const { celebrate, Joi, errors } = require('celebrate');
+const helmet = require('helmet');
+const { errors } = require('celebrate');
+const limiter = require('./middlewares/limiter');
 const routers = require('./routes/index');
-const NotFoundError = require('./errors/not-found-error');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const notFoundError = require('./middlewares/notFoundError');
+const errorHandler = require('./middlewares/errorHandler');
+// const NotFoundError = require('./errors/not-found-error');
+// const { NOT_FOUND_ERROR } = require('./utils/errors');
+// const { SERVER__ERROR } = require('./utils/errors');
 
-const { PORT = 3000 } = process.env;
+const {
+  PORT = 3000,
+  MONGO_URL = 'mongodb://localhost:27017/newsdb',
+} = process.env;
 
 const app = express();
-app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/newsdb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
   useUnifiedTopology: true,
 });
 
+app.use(cors());
+app.use(helmet());
+app.use(limiter);
 app.use(bodyParser.json());
-
+app.use(requestLogger);
 app.use(routers);
+app.use(errorLogger);
+app.use(errors());
 
-// app.use(errors());
+// app.use('*', (req, res, next) => {
+//   next(new NotFoundError(NOT_FOUND_ERROR));
+// });
+app.use(notFoundError);
+app.use(errorHandler);
 
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Запрашиваемый ресурс не найден'));
-});
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
+// app.use((err, req, res, next) => {
+//   const { statusCode = 500, message } = err;
+//   res.status(statusCode).send({ message: statusCode === 500 ? SERVER__ERROR : message });
+//   next();
+// });
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
