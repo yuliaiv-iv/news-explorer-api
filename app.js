@@ -10,18 +10,12 @@ const routers = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const notFoundError = require('./middlewares/notFoundError');
 const errorHandler = require('./middlewares/errorHandler');
-// const NotFoundError = require('./errors/not-found-error');
-// const { NOT_FOUND_ERROR } = require('./utils/errors');
-// const { SERVER__ERROR } = require('./utils/errors');
 
-const {
-  PORT = 3000,
-  MONGO_URL = 'mongodb://localhost:27017/newsdb',
-} = process.env;
+const { END_PORT, URL } = require('./utils/config');
 
 const app = express();
 
-mongoose.connect(MONGO_URL, {
+mongoose.connect(URL, {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
@@ -36,19 +30,9 @@ app.use(requestLogger);
 app.use(routers);
 app.use(errorLogger);
 app.use(errors());
-
-// app.use('*', (req, res, next) => {
-//   next(new NotFoundError(NOT_FOUND_ERROR));
-// });
 app.use(notFoundError);
 app.use(errorHandler);
 
-// app.use((err, req, res, next) => {
-//   const { statusCode = 500, message } = err;
-//   res.status(statusCode).send({ message: statusCode === 500 ? SERVER__ERROR : message });
-//   next();
-// });
-
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+app.listen(END_PORT, () => {
+  console.log(`App listening on port ${END_PORT}`);
 });
