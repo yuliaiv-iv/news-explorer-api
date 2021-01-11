@@ -10,7 +10,6 @@ const routers = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const notFoundError = require('./middlewares/notFoundError');
 const errorHandler = require('./middlewares/errorHandler');
-
 const { END_PORT, URL } = require('./utils/config');
 
 const app = express();
@@ -24,15 +23,13 @@ mongoose.connect(URL, {
 
 app.use(cors());
 app.use(helmet());
-app.use(limiter);
 app.use(bodyParser.json());
 app.use(requestLogger);
+app.use(limiter);
 app.use(routers);
 app.use(errorLogger);
 app.use(errors());
 app.use(notFoundError);
 app.use(errorHandler);
 
-app.listen(END_PORT, () => {
-  console.log(`App listening on port ${END_PORT}`);
-});
+app.listen(END_PORT);

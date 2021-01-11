@@ -45,8 +45,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(BADREQ_ERROR));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -60,8 +61,9 @@ const loginUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(BADREQ_ERROR));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 

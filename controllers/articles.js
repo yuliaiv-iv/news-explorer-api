@@ -25,7 +25,6 @@ const createArticle = (req, res, next) => {
     link,
     image,
   } = req.body;
-  const owner = req.user._id;
   Article.create({
     keyword,
     title,
@@ -34,16 +33,19 @@ const createArticle = (req, res, next) => {
     source,
     link,
     image,
-    owner,
+    owner: req.user._id,
   })
-    .then((article) => {
+    .then((data) => {
+      const articleData = data.toObject();
+      const { owner, ...article } = articleData;
       res.status(200).send(article);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(BADREQ_ERROR));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -52,13 +54,12 @@ const deleteArticle = (req, res, next) => {
   Article.findById(req.params.id).select('+owner')
     .then((article) => {
       if (!article) {
-        console.log('artic', article);
         throw new NotFoundError(NOT_FOUND_ERROR);
       } else if (article.owner.toString() !== owner) {
         throw new ForbiddenError(FORBIDDEN_ERROR);
       }
       Article.findByIdAndRemove(req.params.id)
-        .then((removedarticle) => res.status(200).send(removedarticle));
+        .then((removedArticle) => res.status(200).send(removedArticle));
     })
     .catch((err) => next(err));
 };
