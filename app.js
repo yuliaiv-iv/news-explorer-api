@@ -2,8 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const bodyParser = require('body-parser');
-// const cors = require('cors');
-// const helmet = require('helmet');
+const cors = require('cors');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 // const limiter = require('./middlewares/limiter');
 const routers = require('./routes/index');
@@ -21,8 +21,8 @@ mongoose.connect(URL, {
   useUnifiedTopology: true,
 });
 
-// app.use(cors());
-// app.use(helmet());
+app.use(cors());
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(requestLogger);
 // app.use(limiter);
