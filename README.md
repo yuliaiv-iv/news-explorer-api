@@ -1,7 +1,7 @@
 ## news-explorer-api
 
 Backend для приложения ***News Explorer***
-Домен API доступен => https://api.newsinthecloud.students.nomoredomains.monster
+Домен API доступен => https://api.newsonthecloud.students.nomoredomains.monster
 
 ### Описание
 
@@ -17,11 +17,12 @@ Backend для приложения ***News Explorer***
 
 ### Технологии
 
-При разработке веб-сайта использованы следующие технологии:
-* JS
+При разработке API использованы следующие технологии:
+* Mongoose
 * Express
 * NodeJS
-* MongoDB
+* celebrate
+* JWT
 
 ### Запуск и установка
 * `npm install` устанавка зависимостей в package.json
