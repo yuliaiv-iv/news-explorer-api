@@ -17,7 +17,6 @@ Backend для приложения ***News Explorer***
 
 ### Технологии
 
-При разработке API использованы следующие технологии:
 * Mongoose
 * Express
 * NodeJS
@@ -25,5 +24,5 @@ Backend для приложения ***News Explorer***
 * JWT
 
 ### Запуск и установка
-* `npm install` устанавка зависимостей в package.json
+* `npm install` установка зависимостей в package.json
 * `npm run start` запустить проект
